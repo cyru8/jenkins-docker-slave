@@ -9,7 +9,6 @@ RUN apt-get -y update
 RUN apt-get install -y openjdk-8-jdk
 RUN apt-get install -y openssh-server
 RUN ssh-keygen -A
-RUN sed -i 's|session    required     pam_loginuid.so|session    optional     pam_loginuid.so|g' /etc/pam.d/sshd && \
 
 ADD ./sshd_config /etc/ssh/sshd_config
 
