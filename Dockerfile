@@ -1,36 +1,25 @@
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 
 LABEL maintainer="O. Adetiba <olumide.adetiba@live.com>"
 
 # Make sure the package repository is up to date.
-RUN apt-get update && \
-    apt-get -qy full-upgrade && \
-    apt-get install -qy git && \
-# Install a basic SSH server
-    apt-get install -qy openssh-server && \
-    sed -i 's|session    required     pam_loginuid.so|session    optional     pam_loginuid.so|g' /etc/pam.d/sshd && \
-    mkdir -p /var/run/sshd && \
-# Install JDK 8 (latest stable edition at 2019-04-01)
-    apt-get install -qy openjdk-8-jdk && \
-# Install maven
-    apt-get install -qy maven && \
-# Cleanup old packages
-    apt-get -qy autoremove && \
+RUN mkdir -p /var/run/sshd
+
+RUN apt-get -y update
+RUN apt-get install -y openjdk-8-jdk
+RUN apt-get install -y openssh-server
+RUN ssh-keygen -A
+RUN sed -i 's|session    required     pam_loginuid.so|session    optional     pam_loginuid.so|g' /etc/pam.d/sshd && \
+
+ADD ./sshd_config /etc/ssh/sshd_config
+
 # Add user jenkins to the image
-    adduser --quiet jenkins && \
+RUN adduser --quiet jenkins
 # Set password for the jenkins user (you may want to alter this).
-    echo "jenkins:jenkins" | chpasswd && \
-    mkdir /home/jenkins/.m2
-
-#ADD settings.xml /home/jenkins/.m2/
-# Copy authorized keys
-COPY .ssh/authorized_keys /home/jenkins/.ssh/authorized_keys
-
-RUN chown -R jenkins:jenkins /home/jenkins/.m2/ && \
-    chown -R jenkins:jenkins /home/jenkins/.ssh/
+RUN echo "jenkins:password123" | chpasswd
 
 # Standard SSH port
 EXPOSE 22
 
 CMD ["/usr/sbin/sshd", "-D"]
-#docker build -t jenkins-slave .
+#docker build -t ti-jenkins-slave:v1 .
