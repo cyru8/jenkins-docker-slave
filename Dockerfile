@@ -6,6 +6,7 @@ LABEL maintainer="O. Adetiba <olumide.adetiba@live.com>"
 RUN mkdir -p /var/run/sshd
 
 RUN apt-get -y update
+RUN apt-get install -y apt-utils
 RUN apt-get install -y openjdk-8-jdk
 RUN apt-get install -y openssh-server
 RUN ssh-keygen -A
