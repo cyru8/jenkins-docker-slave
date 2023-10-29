@@ -12,10 +12,8 @@ RUN ssh-keygen -A
 
 ADD ./sshd_config /etc/ssh/sshd_config
 
-# Add user jenkins to the image
-RUN adduser --quiet jenkins
 # Set password for the jenkins user (you may want to alter this).
-RUN echo "jenkins:password123" | chpasswd
+RUN echo root:password123 | chpasswd
 
 # Standard SSH port
 EXPOSE 22
